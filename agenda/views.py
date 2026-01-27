@@ -6,14 +6,14 @@ class View:
         return ClienteDAO.listar()
     def cliente_listar_id(id):
         return ClienteDAO.listar_id(id)
-    def cliente_inserir(nome, email, fone):
-        cliente = Cliente(0, nome, email, fone)
+    def cliente_inserir(nome, email, fone, senha):
+        cliente = Cliente(0, nome, email, fone, senha)
         ClienteDAO.inserir(cliente)
-    def cliente_atualizar(id, nome, email, fone):
-        cliente = Cliente(id, nome, email, fone)
+    def cliente_atualizar(id, nome, email, fone, senha):
+        cliente = Cliente(id, nome, email, fone, senha)
         ClienteDAO.atualizar(cliente)
     def cliente_excluir(id):
-        cliente = Cliente(id, "", "", "")
+        cliente = Cliente(id, "", "", "", "")
         ClienteDAO.excluir(cliente)
 
     def horario_inserir(data, confirmado, id_cliente, id_servico):
