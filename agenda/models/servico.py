@@ -38,14 +38,15 @@ class Servico:
         
 class ServicoDAO(DAO):
     __objetos = []
-    
+
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
-        id = 0
+        novo_id = 0
         for aux in cls.__objetos:
-            if aux.get_id() > id: id = aux.get_id()
-        obj.set_id(id + 1)
+            if aux.get_id() > novo_id:
+                novo_id = aux.get_id()
+        obj.set_id(novo_id + 1)
         cls.__objetos.append(obj)
         cls.salvar()
 
@@ -58,4 +59,39 @@ class ServicoDAO(DAO):
     def listar_id(cls, id):
         cls.abrir()
         for obj in cls.__objetos:
-            if obj.get_id() == id: return obj
+            if obj.get_id() == id:
+                return obj
+        return None
+
+    @classmethod
+    def atualizar(cls, obj):
+        cls.abrir()
+        antigo = cls.listar_id(obj.get_id())
+        if antigo:
+            cls.__objetos.remove(antigo)
+            cls.__objetos.append(obj)
+            cls.salvar()
+
+    @classmethod
+    def excluir(cls, obj):
+        cls.abrir()
+        antigo = cls.listar_id(obj.get_id())
+        if antigo:
+            cls.__objetos.remove(antigo)
+            cls.salvar()
+
+    @classmethod
+    def abrir(cls):
+        cls.__objetos = []
+        try:
+            with open("servicos.json", "r") as arquivo:
+                lista = json.load(arquivo)
+                for dic in lista:
+                    cls.__objetos.append(Servico.from_json(dic))
+        except FileNotFoundError:
+            pass
+
+    @classmethod
+    def salvar(cls):
+        with open("servicos.json", "w") as arquivo:
+            json.dump(cls.__objetos, arquivo, default=Servico.to_json)

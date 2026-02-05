@@ -2,21 +2,21 @@ import streamlit as st
 from views import View
 
 class LoginUI:
+
+    @staticmethod
     def main():
-        st.title("Entrar no Sistema")
-        email = st.text_input("Informe o e-mail")
-        senha = st.text_input("Informe a senha", type="password")
+        st.header("Login")
+
+        email = st.text_input("Email")
+        senha = st.text_input("Senha", type="password")
+
         if st.button("Entrar"):
             c = View.cliente_autenticar(email, senha)
-            if c  == None: st.write("E-mail ou senha inválidos.")
+
+            if c is None:
+                st.error("Email ou senha inválidos")
             else:
-                st.session_state['usuario_id'] = c ['id']
-                st.session_state['usuario_nome'] = c ['nome']
+                st.session_state["usuario_id"] = c.get_id()
+                st.session_state["usuario_nome"] = c.get_nome()
+                st.success("Login realizado com sucesso")
                 st.rerun()
-
-
-    def cliente_autenticar(email, senha):
-        for c in View.cliente_listar():
-            if c.get_email() == email and c.get_senha() == senha:
-                return {"id": c.get_id(), "nome": c.get_nome()}
-            return None
