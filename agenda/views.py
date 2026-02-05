@@ -1,7 +1,7 @@
 from models.cliente import Cliente, ClienteDAO
 from models.horario import Horario, HorarioDAO
 from models.servico import Servico, ServicoDAO
-from models.profissional import ProfissionalDAO
+from models.profissional import Profissional, ProfissionalDAO
 import datetime
 
 class View:
@@ -98,3 +98,17 @@ class View:
         r = ProfissionalDAO.listar()
         r.sort(key=lambda obj: obj.get_nome())
         return r
+    
+    def profissional_listar_id(id):
+        return ProfissionalDAO.listar_id(id)
+    def profissional_inserir(nome, especialidade, fone):
+        profissional = Profissional(0, nome, especialidade, fone)
+        ProfissionalDAO.inserir(profissional)
+    def profissional_atualizar(id, nome, especialidade, fone):
+        profissional = Profissional(id, nome, especialidade, fone)
+        ProfissionalDAO.atualizar(profissional)
+    def profissional_excluir(id):
+        profissional = Profissional(id, "", "", "")
+        ProfissionalDAO.excluir(profissional)
+        
+        

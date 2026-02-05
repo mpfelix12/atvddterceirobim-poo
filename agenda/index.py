@@ -4,6 +4,8 @@ from templates.manterhorarioUI import ManterHorarioUI
 from templates.abrircontaUI import AbrirContaUI
 from templates.loginUI import LoginUI
 from templates.perfilclienteUI import PerfilClienteUI
+from templates.agendarservicoUI import AgendarServicoUI
+from templates.manterprofissionalUI import ManterProfissionalUI
 from views import View
 import streamlit as st
 

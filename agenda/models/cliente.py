@@ -1,4 +1,5 @@
 import json
+from models.dao import DAO
 
 class Cliente:
     def __init__(self, id, nome, email, fone, senha):
@@ -35,7 +36,7 @@ class Cliente:
         
 
     
-class ClienteDAO:
+class ClienteDAO (DAO):
     __objetos = []
     @classmethod
     def inserir(cls, obj):

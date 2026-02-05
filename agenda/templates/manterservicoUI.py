@@ -30,7 +30,7 @@ class ManterServicoUI:
             except ValueError as erro:
                 st.error(erro)
             time.sleep(2)
-            st.rerun()]
+            st.rerun()
 
     def excluir():
         op = st.selectbox("Selecione o serviço", View.servico_listar())
