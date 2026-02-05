@@ -29,8 +29,9 @@ class IndexUI:
         if op == "Abrir Conta": AbrirContaUI.main()
 
     def menu_cliente():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Agendar Serviço"])
         if op == "Meus Dados": PerfilClienteUI.main()
+        if op == "Agendar Serviço": AgendarServicoUI.main()
         
     def menu_admin():
         op = st.sidebar.selectbox("Menu", ["Cadastro de Clientes","Cadastro de Serviços", "Cadastro de Horários","Cadastro de Profissionais"])
@@ -54,3 +55,7 @@ class IndexUI:
             if admin: IndexUI.menu_admin()
             else: IndexUI.menu_cliente()
             IndexUI.sair_do_sistema()
+
+    def main():
+        View.cliente_criar_admin()
+        IndexUI.sidebar()
