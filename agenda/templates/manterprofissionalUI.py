@@ -10,16 +10,21 @@ class ManterProfissionalUI:
         if op == "Atualizar": ManterProfissionalUI.atualizar()
         if op == "Excluir": ManterProfissionalUI.excluir()
         
+    @staticmethod
     def inserir():
-        nome = st.text_input("Informe o nome")
-        especialidade = st.text_input("Informe a especialidade")
-        fone = st.text_input("Informe o fone")
+        st.subheader("Inserir Profissional")
+
+        nome = st.text_input("Nome")
+        especialidade = st.text_input("Especialidade")
+        fone = st.text_input("Telefone")
+
         if st.button("Inserir"):
             View.profissional_inserir(nome, especialidade, fone)
-            st.success("Profissional inserido com sucesso")
-            time.sleep(2)
+            st.success("Profissional cadastrado com sucesso!")
             st.rerun()
+
                         
+    @staticmethod
     def atualizar():
         op = st.selectbox("Selecione o profissional", View.profissional_listar())
         nome = st.text_input("Informe o nome", op.get_nome())
@@ -32,6 +37,7 @@ class ManterProfissionalUI:
             time.sleep(2)
             st.rerun()
 
+    @staticmethod
     def excluir():
         op = st.selectbox("Selecione o profissional", View.profissional_listar())
         if st.button("Excluir"):

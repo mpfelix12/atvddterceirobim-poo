@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "descricao": "unha da m\u00e3o",
+        "valor": 35.0
+    },
+    {
+        "id": 2,
+        "descricao": "cortar cabelo",
+        "valor": 25.0
+    },
+    {
+        "id": 3,
+        "descricao": "unha do p\u00e9",
+        "valor": 35.0
+    }
+]

@@ -1,14 +1,20 @@
 import json
-from models.dao import DAO
 
 class Servico:
     def __init__(self, id, descricao, valor):
-        if descricao == "": raise ValueError("Descrição inválida")
-        if valor < 0: raise ValueError("Valor inválido")
+
+        if descricao is None or descricao.strip() == "":
+            raise ValueError("Descrição inválida")
+
+        valor = float(valor)
+
+        if valor < 0:
+            raise ValueError("Valor inválido")
+
         self.__id = id
-        self.__descricao = descricao
+        self.__descricao = descricao.strip()
         self.__valor = valor
-        
+
     def __str__(self):
         return f"{self.__id} - {self.__descricao} - R$ {self.__valor:.2f}"
     
@@ -28,28 +34,28 @@ class Servico:
         self.__valor = valor
         
     def to_json(self):
-        dic = {"id":self.__id, "descricao":self.__descricao,
-            "valor":self.__valor}
-        return dic
+        return{
+            "id": self.get_id(),
+            "descricao": self.get_descricao(),
+            "valor": self.get_valor()
+        }
     
     @staticmethod
     def from_json(dic):
         return Servico(dic["id"], dic["descricao"], dic["valor"])
         
-class ServicoDAO(DAO):
+class ServicoDAO:
+
     __objetos = []
 
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
-        novo_id = 0
-        for aux in cls.__objetos:
-            if aux.get_id() > novo_id:
-                novo_id = aux.get_id()
-        obj.set_id(novo_id + 1)
+        obj.set_id(len(cls.__objetos) + 1)
         cls.__objetos.append(obj)
         cls.salvar()
 
+    # ✅ MÉTODO QUE ESTAVA FALTANDO
     @classmethod
     def listar(cls):
         cls.abrir()
@@ -66,32 +72,44 @@ class ServicoDAO(DAO):
     @classmethod
     def atualizar(cls, obj):
         cls.abrir()
-        antigo = cls.listar_id(obj.get_id())
-        if antigo:
-            cls.__objetos.remove(antigo)
+        aux = cls.listar_id(obj.get_id())
+        if aux is not None:
+            cls.__objetos.remove(aux)
             cls.__objetos.append(obj)
             cls.salvar()
 
     @classmethod
     def excluir(cls, obj):
         cls.abrir()
-        antigo = cls.listar_id(obj.get_id())
-        if antigo:
-            cls.__objetos.remove(antigo)
+        aux = cls.listar_id(obj.get_id())
+        if aux is not None:
+            cls.__objetos.remove(aux)
             cls.salvar()
 
     @classmethod
     def abrir(cls):
+        import json
         cls.__objetos = []
         try:
-            with open("servicos.json", "r") as arquivo:
-                lista = json.load(arquivo)
-                for dic in lista:
-                    cls.__objetos.append(Servico.from_json(dic))
+            with open("servicos.json", "r") as f:
+                lista = json.load(f)
+
+                for item in lista:
+                    descricao = item.get("descricao", "").strip()
+                    valor = float(item.get("valor", 0))
+                    id = item.get("id", 0)
+
+                    if descricao != "":
+                        s = Servico(id, descricao, valor)
+                        cls.__objetos.append(s)
+
         except FileNotFoundError:
-            pass
+            cls.__objetos = []
+
+
 
     @classmethod
     def salvar(cls):
-        with open("servicos.json", "w") as arquivo:
-            json.dump(cls.__objetos, arquivo, default=Servico.to_json)
+        import json
+        with open("servicos.json", "w") as f:
+            json.dump([obj.to_json() for obj in cls.__objetos], f, indent=4)

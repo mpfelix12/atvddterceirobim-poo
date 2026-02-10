@@ -9,6 +9,22 @@ class AgendarServicoUI:
         servicos = View.servico_listar()
         horarios = View.horario_listar()
 
+        st.subheader("Meus Agendamentos")
+
+        meus_horarios = [ 
+            h for h in horarios
+            if h.get_id_cliente() == st.session_state["usuario_id"]
+        ]
+
+        if meus_horarios:
+            for h in meus_horarios:
+                st.write(
+                    f"{h.get_data().strftime('%d/%m/%Y %H:%M')}"
+                )
+        else:
+            st.write("Você ainda não possui agendamentos.")
+
+
         if not profissionais or not servicos or not horarios:
             st.warning("Cadastre profissionais, serviços e horários antes.")
             return
@@ -25,7 +41,10 @@ class AgendarServicoUI:
             format_func=lambda s: s.get_nome()
         )
 
-        horarios_livres = [h for h in horarios if not h.get_confirmado()]
+        horarios_livres = [
+            h for h in horarios
+            if not h.get_confirmado() and h.get_id_cliente() is None
+        ]
 
         if not horarios_livres:
             st.info("Não há horários disponíveis.")

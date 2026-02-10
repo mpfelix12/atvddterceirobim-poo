@@ -69,13 +69,11 @@ class View:
 
     # ---------- HORÁRIO ----------
     @staticmethod
-    def horario_inserir(data, id_profissional):
-        h = Horario(0, data)
-        h.set_confirmado(False)
-        h.set_id_cliente(None)
-        h.set_id_servico(None)
-        h.set_id_profissional(id_profissional)
-        HorarioDAO.inserir(h)
+    def horario_inserir(id_servico, id_profissional, data, hora):
+        obj = Horario(0, id_servico, id_profissional, data, hora)
+        HorarioDAO.inserir(obj)
+
+
 
     @staticmethod
     def horario_listar():
@@ -91,7 +89,8 @@ class View:
         ]
 
     @staticmethod
-    def horario_abrir_agenda(data, hinicio, hfinal, intervalo, id_profissional):
+    def horario_abrir_agenda(data, hinicio, hfinal, intervalo, id_profissional, id_servico):
+
         dt = datetime.strptime(data, "%d/%m/%Y")
 
         if dt.date() < datetime.now().date():
@@ -100,15 +99,21 @@ class View:
         if intervalo > 120:
             raise ValueError("Intervalo máximo de 120 minutos")
 
-        hora = datetime.strptime(hinicio, "%H:%M")
-        fim = datetime.strptime(hfinal, "%H:%M")
+        hora_inicio = datetime.strptime(hinicio, "%H:%M")
+        hora_fim = datetime.strptime(hfinal, "%H:%M")
 
-        atual = dt.replace(hour=hora.hour, minute=hora.minute)
-        limite = dt.replace(hour=fim.hour, minute=fim.minute)
+        atual = dt.replace(hour=hora_inicio.hour, minute=hora_inicio.minute)
+        limite = dt.replace(hour=hora_fim.hour, minute=hora_fim.minute)
 
         while atual < limite:
-            View.horario_inserir(atual, id_profissional)
+            View.horario_inserir(
+                id_servico,
+                id_profissional,
+                atual.date(),
+                atual.time()
+            )
             atual += timedelta(minutes=intervalo)
+
 
     @staticmethod
     def agendar_horario(id_profissional):
@@ -125,18 +130,21 @@ class View:
         return r
 
     @staticmethod
-    def horario_atualizar(id, data, confirmado, id_cliente, id_servico, id_profissional):
-        h = Horario(id, data)
+    def horario_atualizar(id, id_servico, id_profissional, data, hora, confirmado, id_cliente):
+
+        h = Horario(id, id_servico, id_profissional, data, hora)
         h.set_confirmado(confirmado)
         h.set_id_cliente(id_cliente)
-        h.set_id_servico(id_servico)
-        h.set_id_profissional(id_profissional)
+
         HorarioDAO.atualizar(h)
+
 
     @staticmethod
     def horario_excluir(id):
-        h = Horario(id, None)
-        HorarioDAO.excluir(h)
+        h = HorarioDAO.listar_id(id)
+        if h:
+            HorarioDAO.excluir(h)
+
 
     # ---------- PROFISSIONAL ----------
     @staticmethod
@@ -151,8 +159,12 @@ class View:
 
     @staticmethod
     def profissional_inserir(nome, especialidade, fone):
-        p = Profissional(0, nome, especialidade, fone)
-        ProfissionalDAO.inserir(p)
+        from models.profissional import Profissional
+        from models.profissional import ProfissionalDAO
+
+        obj = Profissional(0, nome, especialidade, fone)
+        ProfissionalDAO.inserir(obj)
+
 
     @staticmethod
     def profissional_atualizar(id, nome, especialidade, fone):

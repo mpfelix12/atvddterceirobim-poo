@@ -22,14 +22,18 @@ class Profissional:
     def set_fone(self, fone): self.__fone = fone
 
     def to_json(self):
-        dic = {"id":self.__id, "nome":self.__nome,
-            "especialidade":self.__especialidade, "fone":self.__fone}
-        return dic
+        return{
+            "id": self.__id,
+            "nome": self.__nome,
+            "especialidade": self.__especialidade,
+            "fone": self.__fone
+        }
 
     @staticmethod
     def from_json(dic):
         return Profissional(dic["id"], dic["nome"],
-            dic["especialidade"], dic["fone"])
+            dic["especialidade"], dic["fone"])      
+
         
 class ProfissionalDAO(DAO):
     __objetos = []
@@ -37,18 +41,22 @@ class ProfissionalDAO(DAO):
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
-        id = 0
-        for aux in cls.__objetos:
-            if aux.get_id() > id:
-                id = aux.get_id()
-        obj.set_id(id + 1)
-        cls.__objetos.append(obj)
-        cls.salvar()
 
-    @classmethod
-    def listar(cls):
-        cls.abrir()
-        return cls.__objetos
+        maior_id = 0
+        for p in cls.__objetos:
+            if p.get_id() > maior_id:
+                maior_id = p.get_id()
+
+        obj.set_id(maior_id + 1)
+
+        cls.__objetos.append(obj)
+
+        lista = []
+        for p in cls.__objetos:
+            lista.append(p.to_json())  # 👈 CONVERTE PARA DICIONÁRIO
+
+        DAO.profissional_salvar(lista)
+        
 
     @classmethod
     def listar_id(cls, id):
@@ -58,6 +66,11 @@ class ProfissionalDAO(DAO):
                 return obj
         return None
 
+    @classmethod
+    def listar(cls):
+        cls.abrir()
+        return cls.__objetos
+    
     @classmethod
     def atualizar(cls, obj):
         aux = cls.listar_id(obj.get_id())
